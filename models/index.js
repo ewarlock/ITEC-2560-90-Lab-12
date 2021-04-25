@@ -12,7 +12,7 @@ let db = {}
 
 let sequelize 
 
-if (config.use_env_variable) {
+if (env == 'production') {
     //new Sequelize object uses database url with info on how to connect to postgres
     //running with Heroku
     sequelize = new Sequelize(process.env[config.use_env_variable], config)
