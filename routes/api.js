@@ -7,7 +7,7 @@ let router = express.Router()
 
 router.get('/students', function(req, res, next) {
     //order sorts by fields, in order of fields listed
-    Student.findAll( {order: ['starID']} ).then(students => {
+    Student.findAll( {order: ['present', 'starID']} ).then(students => {
         //return from inside promise, array of students to json
         return res.json(students)
     }).catch ( err => next(err))
