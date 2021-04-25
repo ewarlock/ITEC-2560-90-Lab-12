@@ -27,38 +27,50 @@ export default {
   },
   data() {
     return {
+      //no example data needed
       students: [],
       mostRecentStudent: {}
     }
   },
+  mounted() {
+    //load all students - make API request
+    //mounted runs as app loads
+    this.updateStudents()
+  },
   methods: {
+    updateStudents() {
+      //can call methods in StudentService.js
+      this.$student_api.getAllStudents().then(students => {
+        //returns promise with array of students
+        this.students = students
+      }).catch(() => {
+        alert('Unable to fetch student list')
+      })
+    },
     newStudentAdded(student) {
-      this.students.push(student)
-      this.students.sort((s1, s2) => {
-        return s1.name.toLowerCase() < s2.name.toLowerCase() ? -1 : 1
+      this.$student_api.addStudent(student).then(() => {
+        this.updateStudents() //updates students with new list of students from server after adding
+      }).catch(err => {
+        let msg = err.response.data.join('\n')
+        alert('Error adding student\n' + msg)
       })
     },
     studentArrivedOrLeft(student, present) {
-      // find student in array, update "present"
-
-      //finds 1st match
-      let updateStudent = this.students.find((s) => {
-        if (s.name === student.name && s.starID === student.starID)
-          return true
+      student.present = present //update present value
+      this.$student_api.updateStudent(student).then( () => {
+        this.mostRecentStudent = student
+        this.updateStudents()
+      }).catch(() => {
+        alert('Unable to update student')
       })
-
-      if (updateStudent) {
-        updateStudent.present = present
-        this.mostRecentStudent = updateStudent
-      }
     },
     studentDeleted(student) {
-      //using splice, for some reason I couldn't get filter to work?
-      //could not see any error messages it just didn't do anything
-      let studentIndex = this.students.indexOf(student)
-      this.students.splice(studentIndex, 1)
-
-      this.mostRecentStudent = {}
+      this.$student_api.deleteStudent(student.id).then( () => {
+        this.updateStudents()
+        this.mostRecentStudent = {} //clear welcome/goodbye message just in case
+      }).catch(() => {
+        alert('Unable to delete student')
+      })
     }
   }
 }
