@@ -20,11 +20,11 @@ export default {
         })
     },
 
-    updateStudent(students) {
+    updateStudent(student) {
         //create url /api/students/1 or the id of the student
-        return axios.patch(`${base_url}/${student.id}`, student.then(response => {
+        return axios.patch(`${base_url}/${student.id}`, student).then(response => {
             return response.data
-        }))
+        })
     },
 
     deleteStudent(id) {
