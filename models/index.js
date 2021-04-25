@@ -6,19 +6,19 @@ let env = process.env.NODE_ENV || 'development'
 
 //brings in config.json from main folder... 
 //where we set config for production vs development
-let config = require(__dirname + '/../config.json')
+let config = require(__dirname + '/../config.json')[env]
 
 let db = {}
 
 let sequelize 
 
-if (env == 'production') {
+if (config.use_env_variable) {
     //new Sequelize object uses database url with info on how to connect to postgres
     //running with Heroku
     sequelize = new Sequelize(process.env[config.use_env_variable], config)
 } else {
     //running locally, just give config
-    sequelize = new Sequelize(config.development)
+    sequelize = new Sequelize(config)
 }
 
 //bringing in a function from student.js, use sequelize & DataTypes as parameters
